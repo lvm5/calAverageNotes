@@ -67,7 +67,7 @@ Detecta o tema atual (claro ou escuro) para alterar a paleta de cores.
 
 ---
 
-### 🔹 `glassEffect` (iOS 17+)
+### 🔹 `glassEffect` (NEW iOS 26.0)
 Efeito visual moderno de vidro nos campos, botões e containers.  
 📚 [Documentação glassEffect](https://developer.apple.com/documentation/swiftui/view/glasseffect(_:in:))
 
