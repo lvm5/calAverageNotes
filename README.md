@@ -88,13 +88,4 @@ Permitem organizar os elementos da interface em camadas (`ZStack`) e colunas (`V
    - Soma as notas válidas e divide pela quantidade para obter a média.
 3. O resultado é armazenado em uma variável `@State`, o que atualiza a interface automaticamente.
 
----
 
-## 🔍 Logs de Depuração
-
-O app imprime mensagens úteis no terminal do Xcode para facilitar testes:
-
-```swift
-✅ Nota 0: valor convertido = 9.0
-❌ Erro na nota 2: '' não é válida
-📈 Média final: 8.25
