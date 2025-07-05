@@ -1,1 +1,57 @@
 /noteAverage.xcodeproj/project.xcworkspace/xcuserdata/leandromorais.xcuserdatad
+# Xcode
+.DS_Store
+build/
+DerivedData/
+*.xcworkspace
+xcuserdata/
+*.xccheckout
+*.moved-aside
+*.xcuserstate
+*.xcscmblueprint
+*.xcuserdatad
+.idea/
+*.hmap
+*.ipa
+
+# Swift Package Manager
+.swiftpm/
+.build/
+Packages/
+Package.resolved
+
+# CocoaPods (caso venha a usar)
+Pods/
+Podfile.lock
+
+# Carthage (caso venha a usar)
+Carthage/
+Carthage/Build/
+
+# Fastlane (se usar)
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Playground
+timeline.xctimeline
+playground.xcworkspace
+
+# Logs
+*.log
+
+# Xcode Previews
+*.preview-thumbnails
+
+# Arquivos temporários
+*.tmp
+*.swp
+*.bak
+*~
+
+# Arquivos de backup do sistema/macOS
+*.orig
+Icon?
+ehthumbs.db
+Thumbs.db
