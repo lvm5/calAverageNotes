@@ -7,6 +7,7 @@ struct ArrayNotes: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var notes: [String] = ["", "", "", ""]
     @State private var average: Double?
+    @State private var status: String? = nil
     
     /// FUNÇÃO PARA CONVERTER STRING E CALCULAR A MÉDIA DAS NOTAS
     func calcAverage() {
@@ -16,7 +17,7 @@ struct ArrayNotes: View {
         // (1) o índice (posição da nota no array)
         // (2) o conteúdo (a string da nota em si)
         for (index, newNote) in notes.enumerated() {
-
+            
             // guard let tenta converter a string para Double.
             // Se não conseguir (ex: "abc", ""), o else é executado.
             // Isso garante que só valores numéricos continuem.
@@ -42,6 +43,20 @@ struct ArrayNotes: View {
         // Atualiza a variável @State que é observada pela View.
         // Isso faz o texto da interface mudar automaticamente.
         average = avg
+    }
+    
+    /// FUNÇÃO PARA DETERMINAR SE ALUNO ESTÁ APROVADO, EM RECUPERAÇÃO OU REPROVADO
+    func averageStatus(avg1: Double) -> String? {
+        if avg1 > 0 && avg1 <= 4.0 {
+            return "você foi reprovado"
+        }
+        if avg1 > 4.0 && avg1 <= 5.0 {
+            return "você está derecuperação"
+        }
+        if avg1 > 5.0 && avg1 <= 10 {
+            return "você está aprovado"
+        }
+        return nil
     }
     
     var body: some View {
@@ -93,8 +108,8 @@ struct ArrayNotes: View {
                     // Resultado
                     VStack {
                         Text(average != nil ?
-                             "📊 Sua média foi \(average!, specifier: "%.2f")" :
-                                "❌ Preencha com notas válidas")
+                             "📊 Sua média foi \(average!, specifier: "%.2f") então \(status ?? "status desconhecido")" :
+                             "❌ Preencha com notas válidas")
                         .font(.title3)
                         .foregroundStyle(.secondary)
                         .bold()
@@ -107,6 +122,11 @@ struct ArrayNotes: View {
                     // Botão calcular
                     Button("Calcular") {
                         calcAverage()
+                        if let avg = average {
+                                status = averageStatus(avg1: avg)
+                            } else {
+                                status = nil
+                            }
                     }
                     .font(.largeTitle)
                     .fontWeight(.bold)
