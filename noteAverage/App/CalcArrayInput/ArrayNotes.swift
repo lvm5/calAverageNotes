@@ -3,49 +3,53 @@
 ///
 import SwiftUI
 
+// MARK: - View principal do app
 struct ArrayNotes: View {
+    // Detecta se o sistema está no modo claro ou escuro
     @Environment(\.colorScheme) var colorScheme
+    
+    // Armazena as 4 notas digitadas pelo usuário como texto
     @State private var notes: [String] = ["", "", "", ""]
+    
+    // Armazena a média final calculada (opcional, pois começa sem valor)
     @State private var average: Double?
+    
+    // Armazena o status final do aluno (reprovado, recuperação, aprovado)
     @State private var status: String? = nil
     
-    /// FUNÇÃO PARA CONVERTER STRING E CALCULAR A MÉDIA DAS NOTAS
+    // MARK: - Função para calcular a média das notas
     func calcAverage() {
-        var sum: Double = 0.0 // Acumulador para somar todas as notas válidas
-        var count: Int = 0 // Contador para saber quantas notas válidas foram somadas
-        // .enumerated() percorre o array retornando dois valores ao mesmo tempo:
-        // (1) o índice (posição da nota no array)
-        // (2) o conteúdo (a string da nota em si)
+        var sum: Double = 0.0  // Soma acumulada das notas válidas
+        var count: Int = 0     // Quantidade de notas válidas
+
+        // Percorre todas as notas digitadas
         for (index, newNote) in notes.enumerated() {
-            
-            // guard let tenta converter a string para Double.
-            // Se não conseguir (ex: "abc", ""), o else é executado.
-            // Isso garante que só valores numéricos continuem.
+            // Tenta converter a String para Double (nota numérica)
             guard let noteDouble = Double(newNote) else {
-                // Aqui mostramos o erro, com o índice (posição da nota) e o conteúdo inválido
                 print("❌ Erro na nota \(index): '\(newNote)' não é válida")
-                // O return dentro de um guard faz a função parar imediatamente.
-                // Isso evita calcular média com dados incompletos ou errados.
-                return
+                return // Para tudo se uma nota for inválida
             }
-            // Aqui sabemos que a conversão foi bem-sucedida. Mostramos o valor convertido.
+
+            // Verifica se a nota está dentro da faixa permitida
+            guard noteDouble >= 0 && noteDouble <= 10 else {
+                print("❌ Nota fora da faixa 0–10 na posição \(index): \(noteDouble)")
+                return // Para tudo se a nota for menor que 0 ou maior que 10
+            }
+
             print("✅ Nota \(index): valor convertido = \(noteDouble)")
-            // Somamos a nota no total acumulado
             sum += noteDouble
-            // Contamos que uma nota válida foi considerada
             count += 1
         }
-        // Depois de sair do loop, calculamos a média:
-        // soma total dividida pela quantidade de notas válidas
+
+        // Calcula a média
         let avg: Double = sum / Double(count)
-        // Mostra no terminal o valor da média para debug
         print("📈 Média final: \(avg)")
-        // Atualiza a variável @State que é observada pela View.
-        // Isso faz o texto da interface mudar automaticamente.
+        
+        // Atualiza a média na tela
         average = avg
     }
     
-    /// FUNÇÃO PARA DETERMINAR SE ALUNO ESTÁ APROVADO, EM RECUPERAÇÃO OU REPROVADO
+    // MARK: - Função que retorna o status do aluno baseado na média
     func averageStatus(avg1: Double) -> String? {
         if avg1 > 0 && avg1 <= 4.0 {
             return "você foi reprovado"
@@ -56,12 +60,13 @@ struct ArrayNotes: View {
         if avg1 > 5.0 && avg1 <= 10 {
             return "você está aprovado"
         }
-        return nil
+        return "Valor fora da faixa"
     }
     
+    // MARK: - Interface do usuário (tela principal)
     var body: some View {
         ZStack {
-            // Fundo gradiente
+            // Fundo com gradiente que muda conforme o modo claro/escuro
             LinearGradient(
                 colors: colorScheme == .dark
                 ? [
@@ -76,22 +81,23 @@ struct ArrayNotes: View {
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
-            .ignoresSafeArea()
+            .ignoresSafeArea() // Faz o fundo ocupar toda a tela
             
-            // Container principal com LiquidGlass
+            // MARK: - Container com efeito de vidro
             GlassEffectContainer(spacing: 24) {
                 VStack(spacing: 24) {
-                    // Seção de entrada de notas
+                    
+                    // MARK: - Entrada de notas (textfields)
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Calcule sua nota final")
                             .font(.title)
-                        //.bold()
                             .foregroundStyle(.primary)
                         
                         Text("Inserir as notas abaixo...")
                             .font(.callout)
                             .foregroundStyle(.secondary)
                         
+                        // Campo de texto para cada nota
                         ForEach(notes.indices, id: \.self) { index in
                             TextField("Adicione uma nota", text: $notes[index])
                                 .keyboardType(.decimalPad)
@@ -105,8 +111,9 @@ struct ArrayNotes: View {
                     .padding()
                     .glassEffect(in: RoundedRectangle(cornerRadius: 24))
                     
-                    // Resultado
+                    // MARK: - Exibição do resultado
                     VStack {
+                        // Mostra a média e o status do aluno, ou mensagem de erro
                         Text(average != nil ?
                              "📊 Sua média foi \(average!, specifier: "%.2f") então \(status ?? "status desconhecido")" :
                              "❌ Preencha com notas válidas")
@@ -119,29 +126,32 @@ struct ArrayNotes: View {
                     .padding()
                     .glassEffect(in: RoundedRectangle(cornerRadius: 24))
                     
-                    // Botão calcular
+                    // MARK: - Botão para calcular média
                     Button("Calcular") {
-                        calcAverage()
+                        calcAverage() // Calcula a média
+                        
+                        // Verifica se a média foi calculada com sucesso
                         if let avg = average {
-                                status = averageStatus(avg1: avg)
-                            } else {
-                                status = nil
-                            }
+                            status = averageStatus(avg1: avg)
+                        } else {
+                            status = nil
+                        }
                     }
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .frame(width: 250, height: 60)
                     .padding()
                     .glassEffect(.regular.interactive())
-                    
                 }
                 .padding()
             }
+            // Ajusta a cor do texto dependendo do modo escuro ou claro
             .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black)
         }
     }
 }
 
+// MARK: - Preview para Xcode Canvas
 #Preview {
     ArrayNotes()
 }
